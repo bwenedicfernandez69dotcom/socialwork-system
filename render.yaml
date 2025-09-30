@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: scheduling-system
+    env: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
