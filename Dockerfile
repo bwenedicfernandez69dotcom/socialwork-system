@@ -7,10 +7,10 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# Install dependencies
+# Install dependencies (kasama na ang SQLite support)
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql zip
+    git unzip libzip-dev zip sqlite3 libsqlite3-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite zip
 
 # Copy composer from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -25,9 +25,14 @@ RUN composer install --no-dev --optimize-autoloader
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
     && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/apache2.conf
 
+# Create SQLite database file (kung wala pa)
+RUN mkdir -p /var/www/html/database \
+    && touch /var/www/html/database/database.sqlite \
+    && chown -R www-data:www-data /var/www/html/database
+
 # Permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Expose port 80
 EXPOSE 80
