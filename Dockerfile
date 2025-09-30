@@ -34,13 +34,14 @@ RUN mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/database
 
+# Clear caches safely during build
+RUN php artisan config:clear || true \
+    && php artisan cache:clear || true \
+    && php artisan route:clear || true \
+    && php artisan view:clear || true
+
 # Expose port 80
 EXPOSE 80
 
-# Start Apache with migrations and cache clears at runtime
-CMD php artisan migrate --force --seed \
-    && php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan route:clear \
-    && php artisan view:clear \
-    && apache2-foreground
+# Run migrations safely at container start
+CMD php artisan migrate --force --seed || true && apache2-foreground
