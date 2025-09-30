@@ -12,9 +12,12 @@ return new class extends Migration
     public function up()
 {
     Schema::table('offerings', function (Blueprint $table) {
-        $table->foreignId('room_id')->constrained()->onDelete('cascade');
+        if (!Schema::hasColumn('offerings', 'room_id')) {
+            $table->integer('room_id')->nullable(false);
+        }
     });
 }
+
 
     /**
      * Reverse the migrations.

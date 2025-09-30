@@ -10,18 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('availability', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('faculty_id')->constrained()->onDelete('cascade');
-        $table->enum('day', ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']);
-        $table->time('start_time');
-        $table->time('end_time');
-        $table->enum('status', ['available', 'unavailable'])->default('available');
-        $table->timestamps();
-    });
-}
-
+    {
+        Schema::create('availabilities', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('faculty_id')->constrained()->onDelete('cascade');
+            $table->enum('day', ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']);
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->enum('status', ['available', 'unavailable'])->default('available');
+            $table->enum('mode', ['Face-to-Face', 'Online', 'Modular'])->default('Face-to-Face');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
